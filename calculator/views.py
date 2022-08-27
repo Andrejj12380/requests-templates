@@ -1,6 +1,4 @@
-from django.core.paginator import Paginator
 from django.shortcuts import render
-from django.urls import reverse
 
 DATA = {
 	'omlet': {
@@ -18,22 +16,20 @@ DATA = {
 		'сыр, ломтик'    : 1,
 		'помидор, ломтик': 1,
 	},
-	# можете добавить свои рецепты ;)
 }
 
-# Напишите ваш обработчик. Используйте DATA как источник данных
-# Результат - render(request, 'calculator/index.html', context)
-# В качестве контекста должен быть передан словарь с рецептом:
-# context = {
-#   'recipe': {
-#     'ингредиент1': количество1,
-#     'ингредиент2': количество2,
-#   }
-# }
 
-
-def pagi(request, name):
+def recipe(request, name):
 	context = {
-	  'recipe': DATA[name]
+		'recipe': {}
 	}
+	if request.GET.get('servings'):
+		servings = int(request.GET.get('servings'))
+		print(servings)
+		for ingredient, amount in DATA[name].items():
+			context['recipe'][ingredient] = amount * servings
+		print(context)
+	else:
+		for ingredient, amount in DATA[name].items():
+			context['recipe'][ingredient] = amount
 	return render(request, 'calculator/index.html', context)
